@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanAbsenController;
 use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\PengumumanController;
-
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\RoleMiddleware;
+use Illuminate\Support\Facades\Auth;
 
 // Halaman awal
 Route::view('/', 'welcome');
@@ -17,33 +17,40 @@ Route::view('/', 'welcome');
 // AUTH
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/login');
+    return redirect('/');
 })->name('logout');
 
-// DASHBOARD & PROTECTED ROUTES
-Route::middleware('auth')->group(function () {
+// DASHBOARD - Bisa untuk semua role
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', fn() => view('profile'))->name('profile');
+});
 
-    // Absen
+// ADMIN + SUPERADMIN (Laporan)
+Route::middleware(['auth', RoleMiddleware::class.':admin,superadmin'])->group(function () {
     Route::get('/laporan/absen', [AbsenController::class, 'index'])->name('laporan.absen');
     Route::get('/laporan/absen/pdf', [LaporanAbsenController::class, 'exportPdf'])->name('laporan.absen.pdf');
     Route::get('/laporan/absen/excel', [LaporanAbsenController::class, 'exportExcel'])->name('laporan.absen.excel');
 
-    // Cuti
     Route::get('/laporan/cuti', [CutiController::class, 'index'])->name('laporan.cuti');
     Route::get('/laporan/cuti/pdf', [CutiController::class, 'exportPDF'])->name('laporan.cuti.pdf');
     Route::get('/laporan/cuti/excel', [CutiController::class, 'exportExcel'])->name('laporan.cuti.excel');
 
-    // Pengumuman
     Route::get('/laporan/pengumuman', [PengumumanController::class, 'index'])->name('laporan.pengumuman');
     Route::get('/laporan/pengumuman/pdf', [PengumumanController::class, 'exportPDF'])->name('laporan.pengumuman.pdf');
     Route::get('/laporan/pengumuman/excel', [PengumumanController::class, 'exportExcel'])->name('laporan.pengumuman.excel');
+});
 
+// SUPERADMIN ONLY (Manajemen User) → dengan prefix laporan/users
+Route::middleware(['auth', RoleMiddleware::class.':superadmin'])->prefix('laporan/users')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('users.index');
+    Route::get('/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/', [UserController::class, 'store'])->name('users.store');
+    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 });

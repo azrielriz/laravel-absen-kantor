@@ -315,6 +315,12 @@ return [
         'url'  => 'laporan/pengumuman',
         'icon' => 'fas fa-bullhorn',
     ],
+      [
+        'text' => 'manajemen users',
+        'url'  => 'laporan/users',
+        'icon' => 'fas fa-bullhorn',
+    ],
+    
 ],
 
 

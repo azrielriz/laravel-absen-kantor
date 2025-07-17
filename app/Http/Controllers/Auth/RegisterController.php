@@ -13,7 +13,7 @@ class RegisterController extends Controller
 {
     public function showRegistrationForm()
 {
-    return view('auth.register'); // Pastikan file ini ada: resources/views/auth/register.blade.php
+    return view('auth.login'); // Pastikan file ini ada: resources/views/auth/register.blade.php
 }
 
     public function register(Request $request)
