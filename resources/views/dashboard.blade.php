@@ -1,4 +1,3 @@
-{{-- resources/views/dashboard.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', 'Dashboard')
@@ -18,13 +17,11 @@
 @section('content')
 <div class="container-fluid">
 
-    {{-- Pesan jika berhasil login --}}
     @auth
         <div class="alert alert-success">
             Anda berhasil login sebagai <strong>{{ auth()->user()->name }}</strong>
         </div>
 
-        {{-- Panel Super Admin --}}
         @if(auth()->user()->user_type == 'superadmin')
             <div class="card mb-3">
                 <div class="card-header bg-danger text-white">
@@ -44,7 +41,6 @@
             </div>
         @endif
 
-        {{-- Panel Admin --}}
         @if(auth()->user()->user_type == 'admin')
             <div class="card mb-3">
                 <div class="card-header bg-dark text-white">
@@ -61,7 +57,6 @@
             </div>
         @endif
 
-        {{-- Informasi izin --}}
         @can('manage laporan')
             <div class="alert alert-info">
                 Anda memiliki izin untuk <strong>mengelola laporan</strong>.
@@ -69,10 +64,9 @@
         @endcan
     @endauth
 
-    {{-- Statistik Dashboard --}}
     <div class="row mt-4">
 
-        {{-- Box Total Absen --}}
+        {{-- Total Absen --}}
         <div class="col-lg-3 col-6">
             <div class="small-box text-white" style="background: linear-gradient(to right, #00b09b, #96c93d);">
                 <div class="inner">
@@ -88,7 +82,7 @@
             </div>
         </div>
 
-        {{-- Box Total Cuti --}}
+        {{-- Total Cuti --}}
         <div class="col-lg-3 col-6">
             <div class="small-box text-white" style="background: linear-gradient(to right, #f7971e, #ffd200);">
                 <div class="inner">
@@ -104,7 +98,7 @@
             </div>
         </div>
 
-        {{-- Box Total Pengumuman --}}
+        {{-- Total Pengumuman --}}
         <div class="col-lg-3 col-6">
             <div class="small-box text-white" style="background: linear-gradient(to right, #396afc, #2948ff);">
                 <div class="inner">
@@ -120,22 +114,40 @@
             </div>
         </div>
 
-        {{-- Box Manajemen User (Hanya Superadmin) --}}
-        @if(auth()->user()->user_type == 'superadmin')
-            <div class="col-lg-3 col-6">
-                <div class="small-box text-white" style="background: linear-gradient(to right, #8e2de2, #4a00e0);">
-                    <div class="inner">
-                        <h3>{{ $userCount ?? 0 }}</h3>
-                        <p>Manajemen User</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fas fa-users-cog"></i>
-                    </div>
-                    <a href="{{ route('users.index') }}" class="small-box-footer text-white">
-                        Kelola User <i class="fas fa-arrow-circle-right"></i>
-                    </a>
+        {{-- Manajemen Pegawai --}}
+        @if(auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'superadmin')
+        <div class="col-lg-3 col-6">
+            <div class="small-box text-white" style="background: {{ auth()->user()->user_type == 'admin' ? 'transparent' : 'linear-gradient(to right, #00c6ff, #0072ff)' }};">
+                <div class="inner">
+                    <h3>{{ $pegawaiCount ?? 0 }}</h3>
+                    <p>Manajemen Pegawai</p>
                 </div>
+                <div class="icon">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <a href="{{ route('pegawai.index') }}" class="small-box-footer {{ auth()->user()->user_type == 'admin' ? 'text-muted' : 'text-white' }}">
+                    Kelola Pegawai <i class="fas fa-arrow-circle-right"></i>
+                </a>
             </div>
+        </div>
+        @endif
+
+        {{-- Manajemen User --}}
+        @if(auth()->user()->user_type == 'admin' || auth()->user()->user_type == 'superadmin')
+        <div class="col-lg-3 col-6">
+            <div class="small-box text-white" style="background: {{ auth()->user()->user_type == 'admin' ? 'transparent' : 'linear-gradient(to right, #8e2de2, #4a00e0)' }};">
+                <div class="inner">
+                    <h3>{{ $userCount ?? 0 }}</h3>
+                    <p>Manajemen User</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <a href="{{ route('users.index') }}" class="small-box-footer {{ auth()->user()->user_type == 'admin' ? 'text-muted' : 'text-white' }}">
+                    Kelola User <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
         @endif
 
     </div>

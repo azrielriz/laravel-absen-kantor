@@ -12,19 +12,28 @@ use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     public function index()
-    {
-        // Ambil total data dari masing-masing tabel
-        $absenCount = Absen::count();
-        $cutiCount = Cuti::count();
-        $pengumumanCount = Pengumuman::count();
+{
+    // Ambil total data dari masing-masing tabel
+    $absenCount = Absen::count();
+    $cutiCount = Cuti::count();
+    $pengumumanCount = Pengumuman::count();
 
-        // Tambahan: Hitung jumlah user kalau yang login adalah superadmin
-        $userCount = null;
-        if (Auth::check() && Auth::user()->user_type === 'superadmin') {
-            $userCount = User::count();
+    // Default null
+    $userCount = null;
+    $pegawaiCount = null;
+
+    // Ambil user dan pegawai berdasarkan role atau user_type
+    if (Auth::check()) {
+        if (Auth::user()->user_type === 'superadmin') {
+            $userCount = User::where('user_type', 'admin')->count();
+            $pegawaiCount = User::where('user_type', 'user')->count();
+        } elseif (Auth::user()->user_type === 'admin') {
+            $pegawaiCount = User::where('user_type', 'user')->count();
         }
-
-        // Kirim ke view
-        return view('dashboard', compact('absenCount', 'cutiCount', 'pengumumanCount', 'userCount'));
     }
+
+    // Kirim ke view
+    return view('dashboard', compact('absenCount', 'cutiCount', 'pengumumanCount', 'userCount', 'pegawaiCount'));
+}
+
 }

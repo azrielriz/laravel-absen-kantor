@@ -10,6 +10,7 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PegawaiController;
 
 // Halaman awal
 Route::view('/', 'welcome');
@@ -45,12 +46,23 @@ Route::middleware(['auth', RoleMiddleware::class.':admin,superadmin'])->group(fu
     Route::get('/laporan/pengumuman/excel', [PengumumanController::class, 'exportExcel'])->name('laporan.pengumuman.excel');
 });
 
-// SUPERADMIN ONLY (Manajemen User) → dengan prefix laporan/users
+// SUPERADMIN ONLY (Manajemen User dan Pegawai)
 Route::middleware(['auth', RoleMiddleware::class.':superadmin'])->prefix('laporan/users')->group(function () {
+    // CRUD ADMIN
     Route::get('/', [UserController::class, 'index'])->name('users.index');
     Route::get('/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/', [UserController::class, 'store'])->name('users.store');
     Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // CRUD PEGAWAI
+    Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai.index');
+    Route::get('/pegawai/create', [PegawaiController::class, 'create'])->name('pegawai.create');
+    Route::post('/pegawai', [PegawaiController::class, 'store'])->name('pegawai.store');
+    Route::get('/pegawai/{user}/edit', [PegawaiController::class, 'edit'])->name('pegawai.edit');
+    Route::put('/pegawai/{user}', [PegawaiController::class, 'update'])->name('pegawai.update');
+    Route::delete('/pegawai/{user}', [PegawaiController::class, 'destroy'])->name('pegawai.destroy');
 });
+
+

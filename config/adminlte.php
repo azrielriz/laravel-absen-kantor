@@ -320,6 +320,11 @@ return [
         'url'  => 'laporan/users',
         'icon' => 'fas fa-bullhorn',
     ],
+    [
+    'text' => 'Manajemen Pegawai',
+    'url'  => 'laporan/users/pegawai',
+    'icon' => 'fas fa-users',
+    ],
     
 ],
 
