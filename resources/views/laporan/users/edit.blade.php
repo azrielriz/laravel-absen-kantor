@@ -20,7 +20,24 @@
 
         <div class="mb-3">
             <label>Cabang</label>
-            <input type="text" name="cabang" class="form-control" required value="{{ old('cabang', $user->cabang) }}">
+            <select name="cabang_id" class="form-control" required>
+                <option value="">-- Pilih Cabang --</option>
+                @foreach ($cabangs as $cabang)
+                    <option value="{{ $cabang->id }}" {{ $user->cabang_id == $cabang->id ? 'selected' : '' }}>
+                        {{ $cabang->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>No HP</label>
+            <input type="text" name="no_hp" class="form-control" value="{{ old('no_hp', $user->no_hp) }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Jabatan</label>
+            <input type="text" name="jabatan" class="form-control" value="{{ old('jabatan', $user->jabatan) }}">
         </div>
 
         <button class="btn btn-primary">Update</button>

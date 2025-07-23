@@ -6,24 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-       Schema::table('absens', function (Blueprint $table) {
-        $table->decimal('latitude', 10, 8)->nullable();
-        $table->decimal('longitude', 11, 8)->nullable();
-    });
+        Schema::table('absens', function (Blueprint $table) {
+            if (!Schema::hasColumn('absens', 'latitude')) {
+                $table->decimal('latitude', 10, 8)->nullable();
+            }
+            if (!Schema::hasColumn('absens', 'longitude')) {
+                $table->decimal('longitude', 11, 8)->nullable();
+            }
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('absens', function (Blueprint $table) {
-            //
+            $table->dropColumn('latitude');
+            $table->dropColumn('longitude');
         });
     }
 };

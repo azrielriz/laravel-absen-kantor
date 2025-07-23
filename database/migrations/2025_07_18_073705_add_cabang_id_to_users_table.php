@@ -7,16 +7,23 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::table('users', function (Blueprint $table) {
+            // Tambahkan kolom cabang_id setelah kolom role
             $table->unsignedBigInteger('cabang_id')->nullable()->after('role');
 
-            // Optional: tambahkan foreign key kalau mau relasi kuat
-            $table->foreign('cabang_id')->references('id')->on('cabangs')->onDelete('set null');
+            // Tambahkan foreign key dengan nama eksplisit
+            $table->foreign('cabang_id', 'users_cabang_id_foreign')
+                  ->references('id')
+                  ->on('cabangs')
+                  ->onDelete('set null');
         });
     }
 
     public function down(): void {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['cabang_id']);
+            // Hapus foreign key dengan nama eksplisit
+            $table->dropForeign('users_cabang_id_foreign');
+
+            // Hapus kolom
             $table->dropColumn('cabang_id');
         });
     }

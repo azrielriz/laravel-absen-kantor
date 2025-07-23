@@ -34,9 +34,10 @@ class AuthController extends Controller
                 'id'        => $user->id,
                 'name'      => $user->name,
                 'email'     => $user->email,
-                'cabang_id' => $user->cabang_id,
+                'jabatan'   => $user->jabatan,     // ✅ Tambah jabatan
+                'no_hp'     => $user->no_hp,       // ✅ Tambah no_hp
+                'cabang_id' => $user->cabang_id,   // ✅ Penting untuk filter by cabang
             ]
         ]);
     }
 }
-

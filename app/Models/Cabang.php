@@ -6,10 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cabang extends Model
 {
-    // 🛡️ Aktifkan mass assignment untuk kolom "nama"
-    protected $fillable = ['nama'];
+    // 🛡️ Perbaikan: sesuaikan dengan nama kolom di database
+    protected $fillable = ['nama_cabang'];
 
-    // 🔁 Relasi: Satu cabang punya banyak user
     public function users()
     {
         return $this->hasMany(User::class);

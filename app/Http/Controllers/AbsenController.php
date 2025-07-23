@@ -26,35 +26,31 @@ class AbsenController extends Controller
 
     return view('laporan.absen', compact('absens'));
 }
+
     public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'username' => 'required|string',
         'tanggal' => 'required|date',
         'jam' => 'required',
         'status' => 'required',
+        'latitude' => 'nullable|numeric',
+        'longitude' => 'nullable|numeric',
+        'foto' => 'nullable|image|mimes:jpg,jpeg,png',
         'keterangan' => 'nullable|string',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        'latitude' => 'required|numeric',
-        'longitude' => 'required|numeric',
     ]);
 
-    $fotoPath = null;
+    // Simpan foto kalau ada
     if ($request->hasFile('foto')) {
-        $fotoPath = $request->file('foto')->store('absen_foto', 'public');
+        $file = $request->file('foto');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $path = $file->storeAs('absen_foto', $filename, 'public');
+        $validated['foto'] = $path;
     }
 
-    Absen::create([
-        'username' => $request->username,
-        'tanggal' => $request->tanggal,
-        'jam' => $request->jam,
-        'status' => $request->status,
-        'keterangan' => $request->keterangan,
-        'foto' => $fotoPath,
-        'latitude' => $request->latitude,
-        'longitude' => $request->longitude,
-    ]);
-     \Log::info($request->all());
+    // Simpan ke database
+    Absen::create($validated);
+    \Log::info('Data absen:', $validated);
 
 
     return response()->json(['message' => 'Data absen berhasil disimpan'], 201);
